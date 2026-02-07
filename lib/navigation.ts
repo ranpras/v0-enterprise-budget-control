@@ -178,6 +178,12 @@ export const NAV_GROUPS: NavGroup[] = [
     icon: Receipt,
     items: [
       {
+        title: "All Actual",
+        href: "/actual",
+        icon: Receipt,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
         title: "Input Actual",
         href: "/actual/input",
         icon: ReceiptText,
