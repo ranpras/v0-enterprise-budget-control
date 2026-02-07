@@ -125,7 +125,7 @@ export default function ApprovalsPage() {
 
   return (
     <>
-      <AppHeader title="Approval Inbox" />
+      <AppHeader />
       <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
         {/* Toolbar */}
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">

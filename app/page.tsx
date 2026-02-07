@@ -9,7 +9,7 @@ import { PendingApprovals } from "@/components/dashboard/pending-approvals"
 export default function Page() {
   return (
     <>
-      <AppHeader title="Dashboard" />
+      <AppHeader />
       <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
         <SummaryCards />
         <div className="grid gap-6 lg:grid-cols-5">

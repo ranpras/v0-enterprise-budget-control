@@ -1,15 +1,36 @@
 import {
   LayoutDashboard,
   FileText,
+  FolderKanban,
+  FilePen,
+  FileSearch,
+  FileCheck,
   FilePlus,
   FileMinus,
+  FileUp,
   ClipboardList,
+  ClipboardCheck,
+  ClipboardPen,
+  Activity,
   Receipt,
+  ReceiptText,
+  CheckCircle,
+  Undo2,
   BarChart3,
+  TrendingUp,
+  AlertTriangle,
+  FileBarChart,
+  Download,
   Inbox,
   Database,
-  Lock,
-  Settings,
+  Calendar,
+  Building2,
+  BookOpen,
+  MapPin,
+  Truck,
+  FolderOpen,
+  GitBranch,
+  Users,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import type { Role } from "./rbac"
@@ -24,104 +45,283 @@ export interface NavItem {
 
 export interface NavGroup {
   label: string
+  icon: LucideIcon
   items: NavItem[]
 }
 
 export const NAV_GROUPS: NavGroup[] = [
+  // ── 1. DASHBOARD ─────────────────────────────────────────────
   {
-    label: "Overview",
+    label: "Dashboard",
+    icon: LayoutDashboard,
     items: [
       {
-        title: "Dashboard",
+        title: "Dashboard Overview",
         href: "/",
         icon: LayoutDashboard,
         roles: ["operator", "supervisor", "admin", "management"],
       },
-      {
-        title: "Approval Inbox",
-        href: "/approvals",
-        icon: Inbox,
-        roles: ["supervisor", "admin"],
-        badge: "3",
-      },
     ],
   },
+
+  // ── 2. BUDGET PLANNING ───────────────────────────────────────
   {
     label: "Budget Planning",
+    icon: FileText,
     items: [
       {
-        title: "Project Budget",
+        title: "Budget Project",
         href: "/budget/project",
-        icon: FileText,
+        icon: FolderKanban,
         roles: ["operator", "supervisor", "admin"],
       },
       {
-        title: "Routine / OPEX",
+        title: "Budget Rutin (OPEX)",
         href: "/budget/routine",
         icon: FileText,
         roles: ["operator", "supervisor", "admin"],
       },
       {
-        title: "Budget Revision",
-        href: "/budget/revision",
-        icon: FilePlus,
-        roles: ["operator", "supervisor", "admin"],
+        title: "Draft Budget",
+        href: "/budget/draft",
+        icon: FilePen,
+        roles: ["operator"],
       },
       {
-        title: "Unbudget Request",
-        href: "/budget/unbudget",
-        icon: FileMinus,
+        title: "Review Budget",
+        href: "/budget/review",
+        icon: FileSearch,
+        roles: ["supervisor", "admin"],
+      },
+      {
+        title: "Approval Budget",
+        href: "/budget/approval",
+        icon: FileCheck,
+        roles: ["supervisor", "admin"],
+      },
+    ],
+  },
+
+  // ── 3. BUDGET REVISION / UNBUDGET ────────────────────────────
+  {
+    label: "Budget Revision / Unbudget",
+    icon: FilePlus,
+    items: [
+      {
+        title: "Submit Revision",
+        href: "/revision/submit",
+        icon: FileUp,
+        roles: ["operator"],
+      },
+      {
+        title: "Review Revision",
+        href: "/revision/review",
+        icon: FileSearch,
+        roles: ["supervisor", "admin"],
+      },
+      {
+        title: "Approval Revision",
+        href: "/revision/approval",
+        icon: FileCheck,
+        roles: ["admin"],
+      },
+    ],
+  },
+
+  // ── 4. SPENDING REQUEST (COMMITMENT / SPK) ───────────────────
+  {
+    label: "Spending Request (SPK)",
+    icon: ClipboardList,
+    items: [
+      {
+        title: "Create SPK",
+        href: "/spending/create",
+        icon: ClipboardPen,
+        roles: ["operator"],
+      },
+      {
+        title: "Review SPK",
+        href: "/spending/review",
+        icon: ClipboardCheck,
+        roles: ["supervisor"],
+      },
+      {
+        title: "Approval SPK",
+        href: "/spending/approval",
+        icon: FileCheck,
+        roles: ["admin"],
+      },
+      {
+        title: "Active Commitments",
+        href: "/spending/active",
+        icon: Activity,
         roles: ["operator", "supervisor", "admin"],
       },
     ],
   },
+
+  // ── 5. ACTUAL REALIZATION ────────────────────────────────────
   {
-    label: "Spending",
+    label: "Actual Realization",
+    icon: Receipt,
     items: [
       {
-        title: "Spending Request (SPK)",
-        href: "/spending/spk",
-        icon: ClipboardList,
-        roles: ["operator", "supervisor", "admin"],
+        title: "Input Actual",
+        href: "/actual/input",
+        icon: ReceiptText,
+        roles: ["operator"],
       },
       {
-        title: "Actual Realization",
-        href: "/spending/actual",
-        icon: Receipt,
-        roles: ["operator", "supervisor", "admin"],
+        title: "Review Actual",
+        href: "/actual/review",
+        icon: FileSearch,
+        roles: ["supervisor"],
+      },
+      {
+        title: "Approval & Posting",
+        href: "/actual/approval",
+        icon: CheckCircle,
+        roles: ["admin"],
+      },
+      {
+        title: "Reversal",
+        href: "/actual/reversal",
+        icon: Undo2,
+        roles: ["admin"],
       },
     ],
   },
+
+  // ── 6. MONITORING & CONTROL ──────────────────────────────────
   {
-    label: "Monitoring",
+    label: "Monitoring & Control",
+    icon: BarChart3,
     items: [
       {
-        title: "Budget Monitoring",
-        href: "/monitoring",
+        title: "Budget vs Actual (Project)",
+        href: "/monitoring/project",
         icon: BarChart3,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
+        title: "Budget vs Actual (Rutin)",
+        href: "/monitoring/routine",
+        icon: TrendingUp,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
+        title: "Budget vs Commitment",
+        href: "/monitoring/commitment",
+        icon: FileBarChart,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
+        title: "Exception / Overbudget",
+        href: "/monitoring/exception",
+        icon: AlertTriangle,
         roles: ["operator", "supervisor", "admin", "management"],
       },
     ],
   },
+
+  // ── 7. REPORTING ─────────────────────────────────────────────
   {
-    label: "Administration",
+    label: "Reporting",
+    icon: FileBarChart,
     items: [
       {
-        title: "Master Data",
-        href: "/admin/master-data",
-        icon: Database,
-        roles: ["admin"],
+        title: "Budget Report",
+        href: "/reports/budget",
+        icon: FileText,
+        roles: ["operator", "supervisor", "admin", "management"],
       },
+      {
+        title: "Commitment Report",
+        href: "/reports/commitment",
+        icon: ClipboardList,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
+        title: "Actual Report",
+        href: "/reports/actual",
+        icon: Receipt,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
+        title: "Export Center",
+        href: "/reports/export",
+        icon: Download,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+    ],
+  },
+
+  // ── 8. APPROVAL INBOX ────────────────────────────────────────
+  {
+    label: "Approval Inbox",
+    icon: Inbox,
+    items: [
+      {
+        title: "Approval Inbox",
+        href: "/approvals",
+        icon: Inbox,
+        roles: ["supervisor", "admin"],
+        badge: "5",
+      },
+    ],
+  },
+
+  // ── 9. MASTER DATA ──────────────────────────────────────────
+  {
+    label: "Master Data",
+    icon: Database,
+    items: [
       {
         title: "Fiscal Year",
-        href: "/admin/fiscal-year",
-        icon: Lock,
+        href: "/master/fiscal-year",
+        icon: Calendar,
         roles: ["admin"],
       },
       {
-        title: "Settings",
-        href: "/admin/settings",
-        icon: Settings,
+        title: "Unit Kerja",
+        href: "/master/unit-kerja",
+        icon: Building2,
+        roles: ["admin"],
+      },
+      {
+        title: "COA",
+        href: "/master/coa",
+        icon: BookOpen,
+        roles: ["admin"],
+      },
+      {
+        title: "Cost Center (RCC)",
+        href: "/master/cost-center",
+        icon: MapPin,
+        roles: ["admin"],
+      },
+      {
+        title: "Vendor",
+        href: "/master/vendor",
+        icon: Truck,
+        roles: ["admin"],
+      },
+      {
+        title: "Project",
+        href: "/master/project",
+        icon: FolderOpen,
+        roles: ["admin"],
+      },
+      {
+        title: "Approval Matrix",
+        href: "/master/approval-matrix",
+        icon: GitBranch,
+        roles: ["admin"],
+      },
+      {
+        title: "User & Role",
+        href: "/master/users",
+        icon: Users,
         roles: ["admin"],
       },
     ],
