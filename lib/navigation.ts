@@ -140,6 +140,12 @@ export const NAV_GROUPS: NavGroup[] = [
     icon: ClipboardList,
     items: [
       {
+        title: "All SPK",
+        href: "/spending",
+        icon: ClipboardList,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
         title: "Create SPK",
         href: "/spending/create",
         icon: ClipboardPen,
