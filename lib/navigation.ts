@@ -108,6 +108,12 @@ export const NAV_GROUPS: NavGroup[] = [
     icon: FilePlus,
     items: [
       {
+        title: "All Revisions",
+        href: "/revision",
+        icon: FilePlus,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
         title: "Submit Revision",
         href: "/revision/submit",
         icon: FileUp,
