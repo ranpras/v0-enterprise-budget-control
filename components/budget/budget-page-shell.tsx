@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react"
 import { Plus, Download } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 import { AppHeader } from "@/components/app-header"
 import {
   BudgetListFiltersBar,
@@ -16,7 +16,6 @@ import { BudgetForm } from "@/components/budget/budget-form"
 import { BudgetDetail } from "@/components/budget/budget-detail"
 import {
   BUDGET_TYPE_LABELS,
-  getBudgetTotal,
   type BudgetItem,
   type BudgetType,
 } from "@/lib/budget-types"
@@ -32,7 +31,7 @@ export function BudgetPageShell({
   budgetType,
   initialData,
 }: BudgetPageShellProps) {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
   const role = user.role
 
   // Data state (local mock)

@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react"
 import { Plus, Download } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 import { AppHeader } from "@/components/app-header"
 import {
   ActualListFiltersBar,
@@ -26,7 +26,7 @@ interface ActualPageShellProps {
 }
 
 export function ActualPageShell({ initialData }: ActualPageShellProps) {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
   const role = user.role
 
   const [actuals, setActuals] = useState<ActualItem[]>(initialData)

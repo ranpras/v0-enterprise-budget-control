@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react"
 import { ShieldAlert, Inbox } from "lucide-react"
 import { toast } from "sonner"
 import { AppHeader } from "@/components/app-header"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 import {
   ApprovalFiltersBar,
   type ApprovalFilters,
@@ -30,7 +30,7 @@ const DEFAULT_FILTERS: ApprovalFilters = {
 }
 
 export default function ApprovalsPage() {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
 
   // ── State ───────────────────────────────────────────────────
   const [filters, setFilters] = useState<ApprovalFilters>(DEFAULT_FILTERS)

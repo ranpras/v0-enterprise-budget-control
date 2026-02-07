@@ -12,7 +12,7 @@ import {
   Inbox,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 import { cn } from "@/lib/utils"
 
 interface QuickAction {
@@ -76,7 +76,7 @@ const actions: QuickAction[] = [
 ]
 
 export function QuickActions() {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
   const visibleActions = actions.filter((a) => a.roles.includes(user.role))
 
   if (visibleActions.length === 0) return null

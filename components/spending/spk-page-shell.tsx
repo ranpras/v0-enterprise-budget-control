@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { Plus, Download, ShieldAlert } from "lucide-react"
+import { Plus, Download } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 import { AppHeader } from "@/components/app-header"
 import {
   SpkListFiltersBar,
@@ -15,7 +15,6 @@ import { SpkListTable } from "@/components/spending/spk-list-table"
 import { SpkForm } from "@/components/spending/spk-form"
 import { SpkDetail } from "@/components/spending/spk-detail"
 import {
-  getSpkTotal, formatCurrency,
   type SpkItem,
 } from "@/lib/spk-types"
 
@@ -26,7 +25,7 @@ interface SpkPageShellProps {
 }
 
 export function SpkPageShell({ initialData }: SpkPageShellProps) {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
   const role = user.role
 
   const [spks, setSpks] = useState<SpkItem[]>(initialData)

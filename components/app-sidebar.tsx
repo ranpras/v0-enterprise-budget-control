@@ -109,7 +109,10 @@ function CollapsibleNavGroup({
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { user, switchRole } = useRole()
+  const { user, switchRole, logout } = useRole()
+
+  if (!user) return null
+
   const navigation = getNavigationForRole(user.role)
 
   return (
@@ -191,7 +194,10 @@ export function AppSidebar() {
               <KeyRound className="h-4 w-4" />
               Change Password
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              className="gap-2 text-destructive focus:text-destructive"
+              onClick={logout}
+            >
               <LogOut className="h-4 w-4" />
               Logout
             </DropdownMenuItem>

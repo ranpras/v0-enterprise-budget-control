@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react"
 import { Plus, Download } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 import { AppHeader } from "@/components/app-header"
 import {
   RevisionListFiltersBar,
@@ -15,10 +15,7 @@ import { RevisionListTable } from "@/components/revision/revision-list-table"
 import { RevisionForm } from "@/components/revision/revision-form"
 import { RevisionDetail } from "@/components/revision/revision-detail"
 import {
-  getNetImpact,
-  formatCurrency,
   type RevisionItem,
-  type RevisionType,
 } from "@/lib/revision-types"
 
 type View = "list" | "create" | "edit" | "detail"
@@ -28,7 +25,7 @@ interface RevisionPageShellProps {
 }
 
 export function RevisionPageShell({ initialData }: RevisionPageShellProps) {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
   const role = user.role
 
   const [revisions, setRevisions] = useState<RevisionItem[]>(initialData)

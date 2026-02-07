@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { useRole } from "@/components/role-context"
+import { useAuthenticatedRole } from "@/components/role-context"
 
 interface PendingItem {
   id: string
@@ -49,7 +49,7 @@ const pendingItems: PendingItem[] = [
 ]
 
 export function PendingApprovals() {
-  const { user } = useRole()
+  const { user } = useAuthenticatedRole()
 
   if (user.role !== "supervisor" && user.role !== "admin") {
     return null

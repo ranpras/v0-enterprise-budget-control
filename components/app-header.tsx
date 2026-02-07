@@ -117,7 +117,9 @@ const ROLE_BADGE_STYLES: Record<string, string> = {
 }
 
 export function AppHeader() {
-  const { user } = useRole()
+  const { user, logout } = useRole()
+
+  if (!user) return null
 
   return (
     <header className="flex flex-col border-b">
@@ -203,7 +205,10 @@ export function AppHeader() {
               Change Password
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              className="gap-2 text-destructive focus:text-destructive"
+              onClick={logout}
+            >
               <LogOut className="h-4 w-4" />
               Logout
             </DropdownMenuItem>
