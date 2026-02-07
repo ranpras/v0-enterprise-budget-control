@@ -216,6 +216,12 @@ export const NAV_GROUPS: NavGroup[] = [
     icon: BarChart3,
     items: [
       {
+        title: "Dashboard Overview",
+        href: "/monitoring",
+        icon: BarChart3,
+        roles: ["operator", "supervisor", "admin", "management"],
+      },
+      {
         title: "Budget vs Actual (Project)",
         href: "/monitoring/project",
         icon: BarChart3,
@@ -289,7 +295,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
 
-  // ── 9. MASTER DATA ──────────────────────────────────────────
+  // ── 9. MASTER DATA ─────���────────────────────────────────────
   {
     label: "Master Data",
     icon: Database,
