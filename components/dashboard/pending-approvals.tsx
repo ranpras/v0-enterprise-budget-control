@@ -1,6 +1,7 @@
 "use client"
 
-import { Check, X, Eye } from "lucide-react"
+import Link from "next/link"
+import { Check, X, Eye, ArrowRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -105,6 +106,15 @@ export function PendingApprovals() {
               </div>
             </div>
           ))}
+        </div>
+        <div className="border-t px-6 py-2">
+          <Link
+            href="/approvals"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          >
+            View all approvals
+            <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
       </CardContent>
     </Card>

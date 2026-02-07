@@ -30,6 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <AppShell>{children}</AppShell>
+        <Toaster position="top-right" richColors closeButton />
       </body>
     </html>
   )

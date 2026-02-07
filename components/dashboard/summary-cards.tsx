@@ -1,8 +1,10 @@
 "use client"
 
+import { useMemo } from "react"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { computeKpis, DEFAULT_FILTERS, formatCurrency } from "@/lib/monitoring-data"
 
 interface SummaryCardProps {
   title: string
@@ -66,38 +68,44 @@ function SummaryCard({
 }
 
 export function SummaryCards() {
+  const kpis = useMemo(() => computeKpis(DEFAULT_FILTERS), [])
+
+  const commitPct = kpis.totalBudget > 0 ? ((kpis.totalCommitment / kpis.totalBudget) * 100).toFixed(1) : "0"
+  const actualPct = kpis.totalBudget > 0 ? ((kpis.totalActual / kpis.totalBudget) * 100).toFixed(1) : "0"
+  const remainPct = kpis.totalBudget > 0 ? ((kpis.remainingBudget / kpis.totalBudget) * 100).toFixed(1) : "0"
+
   const cards: SummaryCardProps[] = [
     {
       title: "Total Budget (Baseline)",
-      value: "Rp 48.2B",
+      value: formatCurrency(kpis.totalBudget),
       subtitle: "FY 2026 - All Units",
-      trend: "up",
-      trendValue: "+12%",
-      accent: "primary",
+      trend: "up" as const,
+      trendValue: "Baseline",
+      accent: "primary" as const,
     },
     {
       title: "Approved Commitment",
-      value: "Rp 18.7B",
-      subtitle: "38.8% of baseline",
-      trend: "up",
-      trendValue: "38.8%",
-      accent: "warning",
+      value: formatCurrency(kpis.totalCommitment),
+      subtitle: `${commitPct}% of baseline`,
+      trend: "up" as const,
+      trendValue: `${commitPct}%`,
+      accent: "warning" as const,
     },
     {
       title: "Actual Realization",
-      value: "Rp 9.3B",
-      subtitle: "19.3% of baseline",
-      trend: "neutral",
-      trendValue: "19.3%",
-      accent: "success",
+      value: formatCurrency(kpis.totalActual),
+      subtitle: `${actualPct}% of baseline`,
+      trend: "neutral" as const,
+      trendValue: `${actualPct}%`,
+      accent: "success" as const,
     },
     {
       title: "Available Budget",
-      value: "Rp 20.2B",
-      subtitle: "41.9% remaining",
-      trend: "down",
-      trendValue: "-8.1%",
-      accent: "destructive",
+      value: formatCurrency(kpis.remainingBudget),
+      subtitle: `${remainPct}% remaining`,
+      trend: kpis.remainingBudget < 0 ? "down" as const : "neutral" as const,
+      trendValue: `${remainPct}%`,
+      accent: Number(remainPct) < 20 ? "destructive" as const : "primary" as const,
     },
   ]
 

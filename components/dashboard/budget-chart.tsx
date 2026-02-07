@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import {
   Bar,
   BarChart,
@@ -8,37 +9,27 @@ import {
   YAxis,
   Tooltip,
   Legend,
+  CartesianGrid,
 } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-
-const data = [
-  { month: "Jan", budget: 4200, commitment: 1800, actual: 1200 },
-  { month: "Feb", budget: 4200, commitment: 2400, actual: 1500 },
-  { month: "Mar", budget: 4200, commitment: 3100, actual: 1800 },
-  { month: "Apr", budget: 4200, commitment: 3600, actual: 2200 },
-  { month: "May", budget: 4200, commitment: 4000, actual: 2800 },
-  { month: "Jun", budget: 4200, commitment: 4100, actual: 3200 },
-  { month: "Jul", budget: 3800, commitment: 0, actual: 0 },
-  { month: "Aug", budget: 3800, commitment: 0, actual: 0 },
-  { month: "Sep", budget: 3800, commitment: 0, actual: 0 },
-  { month: "Oct", budget: 3800, commitment: 0, actual: 0 },
-  { month: "Nov", budget: 3800, commitment: 0, actual: 0 },
-  { month: "Dec", budget: 3800, commitment: 0, actual: 0 },
-]
+import { computeMonthlyTrend, DEFAULT_FILTERS, formatCurrency } from "@/lib/monitoring-data"
 
 export function BudgetChart() {
+  const data = useMemo(() => computeMonthlyTrend(DEFAULT_FILTERS), [])
+
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium">Budget vs Commitment vs Actual</CardTitle>
         <CardDescription className="text-xs">
-          Monthly breakdown for FY 2026 (in millions Rp)
+          Monthly breakdown for FY 2026
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} barGap={2}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 13% 91%)" vertical={false} />
               <XAxis
                 dataKey="month"
                 axisLine={false}
@@ -49,7 +40,11 @@ export function BudgetChart() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 11, fill: "hsl(220 10% 46%)" }}
-                tickFormatter={(v) => `${v / 1000}B`}
+                tickFormatter={(v) => {
+                  if (v >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(1)}B`
+                  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(0)}M`
+                  return String(v)
+                }}
               />
               <Tooltip
                 contentStyle={{
@@ -59,7 +54,7 @@ export function BudgetChart() {
                   fontSize: "12px",
                   boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.05)",
                 }}
-                formatter={(value: number) => [`Rp ${value}M`, undefined]}
+                formatter={(value: number, name: string) => [formatCurrency(value), name]}
               />
               <Legend
                 verticalAlign="top"
