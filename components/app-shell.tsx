@@ -17,11 +17,10 @@ function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
 
 function AppFooter() {
   return (
-    <footer className="flex shrink-0 items-center justify-between border-t px-6 py-3">
+    <footer className="flex shrink-0 items-center justify-between border-t border-border bg-muted/50 px-6 py-3">
       <span className="text-xs text-muted-foreground">EBCS v0.1.0</span>
       <span className="text-xs text-muted-foreground">
-        &copy; {new Date().getFullYear()} Enterprise Budget Control System. All
-        rights reserved.
+        &copy; {new Date().getFullYear()} Enterprise Budget Control System
       </span>
     </footer>
   )
