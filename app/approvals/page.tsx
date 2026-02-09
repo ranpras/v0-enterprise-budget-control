@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useMemo, useCallback, useEffect } from "react"
-import { ShieldAlert, Inbox } from "lucide-react"
+import { Inbox } from "lucide-react"
 import { toast } from "sonner"
-import { AppHeader } from "@/components/app-header"
 import { useAuthenticatedRole } from "@/components/role-context"
 import {
   ApprovalFiltersBar,
@@ -51,16 +50,13 @@ export default function ApprovalsPage() {
 
   // ── Load submitted items from localStorage ──────────────────
   useEffect(() => {
-    console.log("[v0] Loading approvals from storage...")
     const storedApprovals = getApprovalsFromStorage()
-    console.log("[v0] Found stored approvals:", storedApprovals.length)
-    
+
     if (storedApprovals.length > 0) {
       setApprovals((prev) => {
         // Check if items already exist to avoid duplicates
         const existingIds = new Set(prev.map((a) => a.id))
         const uniqueNewItems = storedApprovals.filter((item) => !existingIds.has(item.id))
-        console.log("[v0] Adding unique items:", uniqueNewItems.length)
         return [...uniqueNewItems, ...prev]
       })
     }
@@ -202,27 +198,23 @@ export default function ApprovalsPage() {
   // ── Access denied screen ────────────────────────────────────
   if (!hasAccess) {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
-          <div className="rounded-full bg-destructive/10 p-4">
-            <ShieldAlert className="h-8 w-8 text-destructive" />
-          </div>
-          <div className="text-center">
-            <h2 className="text-lg font-semibold">Access Denied</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              The Approval Inbox is only available to Supervisor and Admin
-              Budget roles.
-            </p>
-          </div>
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
+        <div className="rounded-full bg-destructive/10 p-4">
+          <Inbox className="h-8 w-8 text-destructive" />
         </div>
-      </>
+        <div className="text-center">
+          <h2 className="text-lg font-semibold">Access Denied</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The Approval Inbox is only available to Supervisor and Admin
+            Budget roles.
+          </p>
+        </div>
+      </div>
     )
   }
 
   return (
     <>
-      <AppHeader />
       <div className="flex flex-1 flex-col gap-5 p-4 md:p-6">
         {/* ── Page header ──────────────────────────────────── */}
         <div className="flex items-start gap-3">

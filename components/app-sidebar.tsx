@@ -196,9 +196,7 @@ export function AppSidebar() {
             </DropdownMenuItem>
             <DropdownMenuItem
               className="gap-2 text-destructive focus:text-destructive"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
+              onClick={() => {
                 logout()
               }}
             >
@@ -215,10 +213,11 @@ export function AppSidebar() {
             {DEMO_USERS.map((demoUser) => (
               <DropdownMenuItem
                 key={demoUser.id}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  switchRole(demoUser.role as Role)
+                onClick={() => {
+                  logout()
+                  setTimeout(() => {
+                    switchRole(demoUser.role as Role)
+                  }, 100)
                 }}
                 className="flex items-center gap-2"
               >

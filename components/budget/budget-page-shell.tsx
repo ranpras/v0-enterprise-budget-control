@@ -5,7 +5,6 @@ import { Plus, Download } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { useAuthenticatedRole } from "@/components/role-context"
-import { AppHeader } from "@/components/app-header"
 import {
   BudgetListFiltersBar,
   DEFAULT_BUDGET_FILTERS,
@@ -363,62 +362,51 @@ export function BudgetPageShell({
   // Render views
   if (view === "create") {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col p-4 md:p-6">
-          <BudgetForm
-            budgetType={budgetType}
-            unitKerja={user.unitName}
-            onSave={handleSave}
-            onSubmit={handleSubmitFromForm}
-            onCancel={handleBack}
-          />
-        </div>
-      </>
+      <div className="flex flex-1 flex-col p-4 md:p-6">
+        <BudgetForm
+          budgetType={budgetType}
+          unitKerja={user.unitName}
+          onSave={handleSave}
+          onSubmit={handleSubmitFromForm}
+          onCancel={handleBack}
+        />
+      </div>
     )
   }
 
   if (view === "edit" && selectedItem) {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col p-4 md:p-6">
-          <BudgetForm
-            budgetType={budgetType}
-            editItem={selectedItem}
-            unitKerja={selectedItem.unitKerja}
-            onSave={handleSave}
-            onSubmit={handleSubmitFromForm}
-            onCancel={handleBack}
-          />
-        </div>
-      </>
+      <div className="flex flex-1 flex-col p-4 md:p-6">
+        <BudgetForm
+          budgetType={budgetType}
+          editItem={selectedItem}
+          unitKerja={selectedItem.unitKerja}
+          onSave={handleSave}
+          onSubmit={handleSubmitFromForm}
+          onCancel={handleBack}
+        />
+      </div>
     )
   }
 
   if (view === "detail" && selectedItem) {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col p-4 md:p-6">
-          <BudgetDetail
-            item={selectedItem}
-            role={role}
-            onBack={handleBack}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            onLock={handleLock}
-          />
-        </div>
-      </>
+      <div className="flex flex-1 flex-col p-4 md:p-6">
+        <BudgetDetail
+          item={selectedItem}
+          role={role}
+          onBack={handleBack}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onLock={handleLock}
+        />
+      </div>
     )
   }
 
   // List view
   return (
-    <>
-      <AppHeader />
-      <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+    <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
         {/* Page heading */}
         <div className="flex items-center justify-between">
           <div>
@@ -464,6 +452,6 @@ export function BudgetPageShell({
           onPageSizeChange={setPageSize}
         />
       </div>
-    </>
-  )
+    )
+  }
 }

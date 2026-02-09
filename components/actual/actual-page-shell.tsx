@@ -5,7 +5,6 @@ import { Plus, Download } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { useAuthenticatedRole } from "@/components/role-context"
-import { AppHeader } from "@/components/app-header"
 import {
   ActualListFiltersBar,
   DEFAULT_ACTUAL_FILTERS,
@@ -389,61 +388,50 @@ export function ActualPageShell({ initialData }: ActualPageShellProps) {
 
   if (view === "create" && role === "operator") {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col p-4 md:p-6">
-          <ActualForm
-            unitKerja={user.unitName}
-            onSave={handleSave}
-            onSubmit={handleSubmitFromForm}
-            onCancel={handleBack}
-          />
-        </div>
-      </>
+      <div className="flex flex-1 flex-col p-4 md:p-6">
+        <ActualForm
+          unitKerja={user.unitName}
+          onSave={handleSave}
+          onSubmit={handleSubmitFromForm}
+          onCancel={handleBack}
+        />
+      </div>
     )
   }
 
   if (view === "edit" && selectedItem && role === "operator") {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col p-4 md:p-6">
-          <ActualForm
-            editItem={selectedItem}
-            unitKerja={selectedItem.unitKerja}
-            onSave={handleSave}
-            onSubmit={handleSubmitFromForm}
-            onCancel={handleBack}
-          />
-        </div>
-      </>
+      <div className="flex flex-1 flex-col p-4 md:p-6">
+        <ActualForm
+          editItem={selectedItem}
+          unitKerja={selectedItem.unitKerja}
+          onSave={handleSave}
+          onSubmit={handleSubmitFromForm}
+          onCancel={handleBack}
+        />
+      </div>
     )
   }
 
   if (view === "detail" && selectedItem) {
     return (
-      <>
-        <AppHeader />
-        <div className="flex flex-1 flex-col p-4 md:p-6">
-          <ActualDetail
-            item={selectedItem}
-            role={role}
-            onBack={handleBack}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            onPost={handlePost}
-            onReverse={handleReverse}
-          />
-        </div>
-      </>
+      <div className="flex flex-1 flex-col p-4 md:p-6">
+        <ActualDetail
+          item={selectedItem}
+          role={role}
+          onBack={handleBack}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onPost={handlePost}
+          onReverse={handleReverse}
+        />
+      </div>
     )
   }
 
   // ── List view ─────────────────────────────────────────────────
   return (
-    <>
-      <AppHeader />
-      <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+    <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-semibold">Actual Realization</h1>
@@ -479,6 +467,6 @@ export function ActualPageShell({ initialData }: ActualPageShellProps) {
           onPageSizeChange={setPageSize}
         />
       </div>
-    </>
-  )
+    )
+  }
 }

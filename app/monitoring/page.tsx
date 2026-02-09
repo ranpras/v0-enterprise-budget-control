@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { AppHeader } from "@/components/app-header"
 import { MonitoringKpis } from "@/components/monitoring/monitoring-kpis"
 import { MonitoringFilterPanel } from "@/components/monitoring/monitoring-filters"
 import { MonitoringAlerts } from "@/components/monitoring/monitoring-alerts"
@@ -35,35 +34,32 @@ export default function MonitoringPage() {
   }, [])
 
   return (
-    <>
-      <AppHeader />
-      <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
-        {/* Filter Panel */}
-        <MonitoringFilterPanel filters={filters} onChange={setFilters} />
+    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+      {/* Filter Panel */}
+      <MonitoringFilterPanel filters={filters} onChange={setFilters} />
 
-        {/* KPI Summary */}
-        <MonitoringKpis kpis={kpis} onDrillDown={handleDrillDown} />
+      {/* KPI Summary */}
+      <MonitoringKpis kpis={kpis} onDrillDown={handleDrillDown} />
 
-        {/* Charts Row 1 */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <BudgetVsActualChart data={monthlyTrend} />
-          <SpendingTrendChart data={monthlyTrend} />
-        </div>
-
-        {/* Charts Row 2 */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <TopVendorsChart data={topVendors} />
-          <SpkStatusPieChart data={statusDist} />
-        </div>
-
-        {/* Alerts */}
-        <MonitoringAlerts alerts={alerts} />
-
-        {/* Detail Table */}
-        <div id="monitoring-table">
-          <MonitoringTable rows={detailRows} />
-        </div>
+      {/* Charts Row 1 */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <BudgetVsActualChart data={monthlyTrend} />
+        <SpendingTrendChart data={monthlyTrend} />
       </div>
-    </>
+
+      {/* Charts Row 2 */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TopVendorsChart data={topVendors} />
+        <SpkStatusPieChart data={statusDist} />
+      </div>
+
+      {/* Alerts */}
+      <MonitoringAlerts alerts={alerts} />
+
+      {/* Detail Table */}
+      <div id="monitoring-table">
+        <MonitoringTable rows={detailRows} />
+      </div>
+    </div>
   )
 }

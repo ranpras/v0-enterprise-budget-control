@@ -56,19 +56,14 @@ export function createApprovalItem(payload: SubmissionPayload): ApprovalItem {
  */
 export function saveApprovalToStorage(item: ApprovalItem): void {
   try {
-    console.log("[v0] saveApprovalToStorage: Saving item:", item.docNumber)
     const existing = localStorage.getItem("submitted_approvals")
     const existingApprovals: ApprovalItem[] = existing ? JSON.parse(existing) : []
-    console.log("[v0] saveApprovalToStorage: Existing count:", existingApprovals.length)
 
     // Check for duplicates before adding
     const isDuplicate = existingApprovals.some((a) => a.id === item.id)
     if (!isDuplicate) {
       const updated = [item, ...existingApprovals]
       localStorage.setItem("submitted_approvals", JSON.stringify(updated))
-      console.log("[v0] saveApprovalToStorage: Saved successfully. Total now:", updated.length)
-    } else {
-      console.log("[v0] saveApprovalToStorage: Duplicate detected, skipping")
     }
   } catch (error) {
     console.error("[v0] Error saving approval to localStorage:", error)
@@ -96,9 +91,7 @@ export function updateApprovalInStorage(item: ApprovalItem): void {
 export function getApprovalsFromStorage(): ApprovalItem[] {
   try {
     const existing = localStorage.getItem("submitted_approvals")
-    const result = existing ? JSON.parse(existing) : []
-    console.log("[v0] getApprovalsFromStorage: Retrieved", result.length, "items")
-    return result
+    return existing ? JSON.parse(existing) : []
   } catch (error) {
     console.error("[v0] Error retrieving approvals from localStorage:", error)
     return []
