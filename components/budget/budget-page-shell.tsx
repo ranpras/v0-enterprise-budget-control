@@ -407,51 +407,50 @@ export function BudgetPageShell({
   // List view
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-        {/* Page heading */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold">
-              {budgetType === "project"
-                ? "Budget Project"
-                : "Budget Rutin (OPEX)"}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {BUDGET_TYPE_LABELS[budgetType]} - FY {new Date().getFullYear()}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5 bg-transparent">
-              <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Export</span>
-            </Button>
-            {role === "operator" && (
-              <Button size="sm" className="gap-1.5" onClick={handleCreate}>
-                <Plus className="h-3.5 w-3.5" />
-                Create Budget
-              </Button>
-            )}
-          </div>
+      {/* Page heading */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-lg font-semibold">
+            {budgetType === "project"
+              ? "Budget Project"
+              : "Budget Rutin (OPEX)"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {BUDGET_TYPE_LABELS[budgetType]} - FY {new Date().getFullYear()}
+          </p>
         </div>
-
-        {/* Filters */}
-        <BudgetListFiltersBar
-          filters={filters}
-          onChange={handleFiltersChange}
-        />
-
-        {/* Table */}
-        <BudgetListTable
-          items={filtered}
-          role={role}
-          onView={handleView}
-          onEdit={handleEdit}
-          onSubmit={handleSubmitFromList}
-          page={page}
-          pageSize={pageSize}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-        />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="gap-1.5 bg-transparent">
+            <Download className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Export</span>
+          </Button>
+          {role === "operator" && (
+            <Button size="sm" className="gap-1.5" onClick={handleCreate}>
+              <Plus className="h-3.5 w-3.5" />
+              Create Budget
+            </Button>
+          )}
+        </div>
       </div>
-    )
-  }
+
+      {/* Filters */}
+      <BudgetListFiltersBar
+        filters={filters}
+        onChange={handleFiltersChange}
+      />
+
+      {/* Table */}
+      <BudgetListTable
+        items={filtered}
+        role={role}
+        onView={handleView}
+        onEdit={handleEdit}
+        onSubmit={handleSubmitFromList}
+        page={page}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
+    </div>
+  )
 }
