@@ -210,6 +210,33 @@ export function ActualPageShell({ initialData }: ActualPageShellProps) {
               : a,
           ),
         )
+        
+        // Create approval item for approval inbox
+        const approvalItem = {
+          id: `appr_${selectedItem.id}`,
+          docNumber: selectedItem.actualNumber,
+          type: "actual" as const,
+          description: data.description || selectedItem.description || "",
+          unit: data.unitKerja || selectedItem.unitKerja || user.unitName,
+          amount: selectedItem.lineItems?.reduce((sum, line) => sum + line.actualAmount, 0) || 0,
+          submittedBy: user.name,
+          submittedDate: now,
+          status: "pending" as const,
+          lineItems: (selectedItem.lineItems || []).map((line) => ({
+            id: line.id,
+            coa: line.coa,
+            description: `Actual: ${line.coa}`,
+            amount: line.actualAmount,
+          })),
+          history: [
+            { approver: user.name, action: "submitted" as const, date: now },
+          ],
+        }
+        
+        const existing = localStorage.getItem("submitted_approvals")
+        const existingApprovals = existing ? JSON.parse(existing) : []
+        localStorage.setItem("submitted_approvals", JSON.stringify([approvalItem, ...existingApprovals]))
+        
         toast.success(`Actual ${selectedItem.actualNumber} submitted.`)
       } else {
         const newId = `act_${Date.now()}`
@@ -237,6 +264,34 @@ export function ActualPageShell({ initialData }: ActualPageShellProps) {
           ],
         }
         setActuals((prev) => [newItem, ...prev])
+        
+        // Create approval item for new Actual
+        const totalAmount = (data.lineItems || []).reduce((sum, line) => sum + line.actualAmount, 0)
+        const approvalItem = {
+          id: `appr_${newId}`,
+          docNumber: newItem.actualNumber,
+          type: "actual" as const,
+          description: data.description || "",
+          unit: data.unitKerja || user.unitName,
+          amount: totalAmount,
+          submittedBy: user.name,
+          submittedDate: now,
+          status: "pending" as const,
+          lineItems: (data.lineItems || []).map((line) => ({
+            id: line.id,
+            coa: line.coa,
+            description: `Actual: ${line.coa}`,
+            amount: line.actualAmount,
+          })),
+          history: [
+            { approver: user.name, action: "submitted" as const, date: now },
+          ],
+        }
+        
+        const existing = localStorage.getItem("submitted_approvals")
+        const existingApprovals = existing ? JSON.parse(existing) : []
+        localStorage.setItem("submitted_approvals", JSON.stringify([approvalItem, ...existingApprovals]))
+        
         toast.success(`Actual ${newItem.actualNumber} submitted.`)
       }
       setView("list")

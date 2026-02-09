@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { ShieldAlert, Inbox } from "lucide-react"
 import { toast } from "sonner"
 import { AppHeader } from "@/components/app-header"
@@ -39,6 +39,7 @@ export default function ApprovalsPage() {
   const { user } = context
 
   // ── State ───────────────────────────────────────────────────
+  const [approvals, setApprovals] = useState<ApprovalItem[]>(MOCK_APPROVALS)
   const [filters, setFilters] = useState<ApprovalFilters>(DEFAULT_FILTERS)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -47,12 +48,26 @@ export default function ApprovalsPage() {
   const [rejectItem, setRejectItem] = useState<ApprovalItem | null>(null)
   const [processedIds, setProcessedIds] = useState<Set<string>>(new Set())
 
+  // ── Load submitted items from localStorage ──────────────────
+  useEffect(() => {
+    const storedApprovals = localStorage.getItem("submitted_approvals")
+    if (storedApprovals) {
+      try {
+        const newApprovals = JSON.parse(storedApprovals)
+        setApprovals((prev) => [...newApprovals, ...prev])
+        localStorage.removeItem("submitted_approvals")
+      } catch (error) {
+        console.log("[v0] Error loading submitted approvals:", error)
+      }
+    }
+  }, [])
+
   // ── Role guard ──────────────────────────────────────────────
   const hasAccess = user.role === "supervisor" || user.role === "admin"
 
   // ── Filtering logic ─────────────────────────────────────────
   const filtered = useMemo(() => {
-    return MOCK_APPROVALS.filter((item) => {
+    return approvals.filter((item) => {
       // Search across doc number, description, submitter
       if (filters.search) {
         const q = filters.search.toLowerCase()
@@ -89,7 +104,7 @@ export default function ApprovalsPage() {
       }
       return true
     })
-  }, [filters])
+  }, [approvals, filters])
 
   // Reset page when filters change
   const handleFiltersChange = useCallback((newFilters: ApprovalFilters) => {
@@ -114,26 +129,64 @@ export default function ApprovalsPage() {
     async (item: ApprovalItem, comment: string) => {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1200))
+      setApprovals((prev) =>
+        prev.map((a) =>
+          a.id === item.id
+            ? {
+                ...a,
+                status: "approved" as const,
+                history: [
+                  ...a.history,
+                  {
+                    approver: user.name,
+                    action: "approved" as const,
+                    date: new Date().toISOString(),
+                    comment,
+                  },
+                ],
+              }
+            : a,
+        ),
+      )
       setProcessedIds((prev) => new Set(prev).add(item.id))
       setDetailItem(null)
       toast.success("Document Approved", {
         description: `${item.docNumber} has been approved successfully.${comment ? ` Comment: "${comment}"` : ""}`,
       })
     },
-    [],
+    [user.name],
   )
 
   const handleRejectConfirm = useCallback(
     async (item: ApprovalItem, comment: string) => {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1200))
+      setApprovals((prev) =>
+        prev.map((a) =>
+          a.id === item.id
+            ? {
+                ...a,
+                status: "rejected" as const,
+                history: [
+                  ...a.history,
+                  {
+                    approver: user.name,
+                    action: "rejected" as const,
+                    date: new Date().toISOString(),
+                    comment,
+                  },
+                ],
+              }
+            : a,
+        ),
+      )
       setProcessedIds((prev) => new Set(prev).add(item.id))
       setDetailItem(null)
       toast.error("Document Rejected", {
         description: `${item.docNumber} has been rejected. Reason: "${comment}"`,
       })
     },
-    [],
+    [user.name],
   )
 
   // ── Access denied screen ────────────────────────────────────
@@ -181,7 +234,7 @@ export default function ApprovalsPage() {
           filters={filters}
           onChange={handleFiltersChange}
           resultCount={filtered.length}
-          totalCount={MOCK_APPROVALS.length}
+          totalCount={approvals.length}
         />
 
         {/* ── Table ────────────────────────────────────────── */}
