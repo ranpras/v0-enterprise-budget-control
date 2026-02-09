@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useCallback } from "react"
+import React, { createContext, useContext, useState, useEffect } from "react"
 import type { UserSession, Role } from "@/lib/rbac"
 import { DEMO_USERS } from "@/lib/rbac"
 
@@ -10,6 +10,7 @@ interface RoleContextType {
   login: (email: string, password: string) => boolean
   logout: () => void
   switchRole: (role: Role) => void
+  isLoading: boolean
 }
 
 const RoleContext = createContext<RoleContextType | null>(null)
@@ -22,38 +23,58 @@ export function useRole() {
   return context
 }
 
-/** Convenience hook that asserts user is logged in */
+/** Safe hook for authenticated contexts - never throws */
 export function useAuthenticatedRole() {
   const context = useRole()
-  if (!context.user) {
-    throw new Error("User is not authenticated")
-  }
-  return { ...context, user: context.user }
+  return context
 }
 
 export function RoleProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserSession | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const login = useCallback((email: string, _password: string) => {
+  // Hydrate from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("ebcs_auth_user")
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        setUser(parsed)
+      }
+    } catch (e) {
+      console.error("[v0] Failed to restore session:", e)
+      sessionStorage.removeItem("ebcs_auth_user")
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const login = (email: string, _password: string) => {
     // Demo login: match by email, any password accepted
     const found = DEMO_USERS.find(
       (u) => u.email.toLowerCase() === email.toLowerCase(),
     )
     if (found) {
       setUser(found)
+      // Persist to sessionStorage
+      sessionStorage.setItem("ebcs_auth_user", JSON.stringify(found))
       return true
     }
     return false
-  }, [])
+  }
 
-  const logout = useCallback(() => {
+  const logout = () => {
     setUser(null)
-  }, [])
+    sessionStorage.removeItem("ebcs_auth_user")
+  }
 
-  const switchRole = useCallback((role: Role) => {
+  const switchRole = (role: Role) => {
     const newUser = DEMO_USERS.find((u) => u.role === role)
-    if (newUser) setUser(newUser)
-  }, [])
+    if (newUser) {
+      setUser(newUser)
+      sessionStorage.setItem("ebcs_auth_user", JSON.stringify(newUser))
+    }
+  }
 
   return (
     <RoleContext.Provider
@@ -63,9 +84,11 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         switchRole,
+        isLoading,
       }}
     >
       {children}
     </RoleContext.Provider>
   )
 }
+

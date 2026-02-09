@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { RoleProvider, useRole } from "@/components/role-context"
 import { LoginPage } from "@/components/login-page"
 import { AppSidebar } from "@/components/app-sidebar"
+import { AppHeader } from "@/components/app-header"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 
 function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
@@ -32,7 +33,19 @@ function AppFooter() {
 }
 
 function AuthenticatedShell({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useRole()
+  const { isAuthenticated, isLoading } = useRole()
+
+  // During hydration/loading, show a loading state to prevent layout shifts
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
     return <LoginPage />
@@ -42,6 +55,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="flex flex-col">
+        <AppHeader />
         <PageTransitionWrapper>{children}</PageTransitionWrapper>
         <AppFooter />
       </SidebarInset>
