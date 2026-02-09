@@ -51,12 +51,16 @@ export default function ApprovalsPage() {
 
   // ── Load submitted items from localStorage ──────────────────
   useEffect(() => {
+    console.log("[v0] Loading approvals from storage...")
     const storedApprovals = getApprovalsFromStorage()
+    console.log("[v0] Found stored approvals:", storedApprovals.length)
+    
     if (storedApprovals.length > 0) {
       setApprovals((prev) => {
         // Check if items already exist to avoid duplicates
         const existingIds = new Set(prev.map((a) => a.id))
         const uniqueNewItems = storedApprovals.filter((item) => !existingIds.has(item.id))
+        console.log("[v0] Adding unique items:", uniqueNewItems.length)
         return [...uniqueNewItems, ...prev]
       })
     }

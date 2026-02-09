@@ -217,7 +217,9 @@ export function SpkPageShell({ initialData }: SpkPageShellProps) {
           submittedBy: user.name,
           lineItems: selectedItem.lineItems || [],
         })
+        console.log("[v0] Creating approval item for existing SPK:", approvalItem)
         saveApprovalToStorage(approvalItem)
+        console.log("[v0] Approval item saved to localStorage")
 
         toast.success(`SPK ${selectedItem.spkNumber} submitted.`)
       } else {
@@ -255,7 +257,9 @@ export function SpkPageShell({ initialData }: SpkPageShellProps) {
           submittedBy: user.name,
           lineItems: data.lineItems || [],
         })
+        console.log("[v0] Creating approval item for new SPK:", approvalItem)
         saveApprovalToStorage(approvalItem)
+        console.log("[v0] Approval item saved to localStorage")
 
         toast.success(`SPK ${newSpk.spkNumber} submitted.`)
       }
