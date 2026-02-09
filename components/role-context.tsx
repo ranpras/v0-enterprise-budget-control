@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import type { UserSession, Role } from "@/lib/rbac"
 import { DEMO_USERS } from "@/lib/rbac"
 
@@ -49,7 +49,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const login = (email: string, _password: string) => {
+  const login = useCallback((email: string, _password: string) => {
     // Demo login: match by email, any password accepted
     const found = DEMO_USERS.find(
       (u) => u.email.toLowerCase() === email.toLowerCase(),
@@ -61,32 +61,32 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
       return true
     }
     return false
-  }
+  }, [])
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null)
     sessionStorage.removeItem("ebcs_auth_user")
-  }
+  }, [])
 
-  const switchRole = (role: Role) => {
+  const switchRole = useCallback((role: Role) => {
     const newUser = DEMO_USERS.find((u) => u.role === role)
     if (newUser) {
       setUser(newUser)
       sessionStorage.setItem("ebcs_auth_user", JSON.stringify(newUser))
     }
+  }, [])
+
+  const contextValue = {
+    user,
+    isAuthenticated: user !== null,
+    login,
+    logout,
+    switchRole,
+    isLoading,
   }
 
   return (
-    <RoleContext.Provider
-      value={{
-        user,
-        isAuthenticated: user !== null,
-        login,
-        logout,
-        switchRole,
-        isLoading,
-      }}
-    >
+    <RoleContext.Provider value={contextValue}>
       {children}
     </RoleContext.Provider>
   )

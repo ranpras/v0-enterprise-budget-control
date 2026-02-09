@@ -37,15 +37,30 @@ export function LoginPage() {
     const success = login(email, password)
     if (!success) {
       setError("Invalid email. Use one of the demo accounts below.")
+      setIsLoading(false)
+    } else {
+      // Reset form on success
+      setEmail("")
+      setPassword("")
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   function handleQuickLogin(userEmail: string) {
-    setEmail(userEmail)
-    setPassword("demo")
     setError("")
-    login(userEmail, "demo")
+    setIsLoading(true)
+    
+    // Simulate network delay
+    setTimeout(() => {
+      const success = login(userEmail, "demo")
+      if (success) {
+        setEmail("")
+        setPassword("")
+      } else {
+        setError("Quick login failed. Please try again.")
+      }
+      setIsLoading(false)
+    }, 600)
   }
 
   return (

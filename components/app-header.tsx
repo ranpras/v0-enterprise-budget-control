@@ -207,9 +207,7 @@ export function AppHeader() {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="gap-2 text-destructive focus:text-destructive"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
+              onClick={() => {
                 logout()
               }}
             >
