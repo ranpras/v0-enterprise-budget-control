@@ -76,7 +76,13 @@ const actions: QuickAction[] = [
 ]
 
 export function QuickActions() {
-  const { user } = useAuthenticatedRole()
+  const context = useAuthenticatedRole()
+  
+  if (!context.user) {
+    return null
+  }
+  
+  const { user } = context
   const visibleActions = actions.filter((a) => a.roles.includes(user.role))
 
   if (visibleActions.length === 0) return null

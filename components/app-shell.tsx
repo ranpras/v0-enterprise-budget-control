@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { usePathname } from "next/navigation"
 import { RoleProvider, useRole } from "@/components/role-context"
 import { LoginPage } from "@/components/login-page"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -9,12 +8,8 @@ import { AppHeader } from "@/components/app-header"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 
 function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
   return (
-    <div
-      key={pathname}
-      className="flex min-h-0 flex-1 flex-col animate-in fade-in duration-300"
-    >
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       {children}
     </div>
   )

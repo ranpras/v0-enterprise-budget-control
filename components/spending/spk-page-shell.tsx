@@ -25,7 +25,13 @@ interface SpkPageShellProps {
 }
 
 export function SpkPageShell({ initialData }: SpkPageShellProps) {
-  const { user } = useAuthenticatedRole()
+  const context = useAuthenticatedRole()
+  
+  if (!context.user) {
+    return null
+  }
+  
+  const { user } = context
   const role = user.role
 
   const [spks, setSpks] = useState<SpkItem[]>(initialData)

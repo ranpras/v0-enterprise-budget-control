@@ -49,7 +49,13 @@ const pendingItems: PendingItem[] = [
 ]
 
 export function PendingApprovals() {
-  const { user } = useAuthenticatedRole()
+  const context = useAuthenticatedRole()
+  
+  if (!context.user) {
+    return null
+  }
+  
+  const { user } = context
 
   if (user.role !== "supervisor" && user.role !== "admin") {
     return null

@@ -26,7 +26,13 @@ interface ActualPageShellProps {
 }
 
 export function ActualPageShell({ initialData }: ActualPageShellProps) {
-  const { user } = useAuthenticatedRole()
+  const context = useAuthenticatedRole()
+  
+  if (!context.user) {
+    return null
+  }
+  
+  const { user } = context
   const role = user.role
 
   const [actuals, setActuals] = useState<ActualItem[]>(initialData)

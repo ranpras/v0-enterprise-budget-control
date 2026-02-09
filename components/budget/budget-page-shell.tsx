@@ -31,7 +31,14 @@ export function BudgetPageShell({
   budgetType,
   initialData,
 }: BudgetPageShellProps) {
-  const { user } = useAuthenticatedRole()
+  const context = useAuthenticatedRole()
+  
+  // Guard against null user during edge cases
+  if (!context.user) {
+    return null
+  }
+  
+  const { user } = context
   const role = user.role
 
   // Data state (local mock)

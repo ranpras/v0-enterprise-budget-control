@@ -30,7 +30,13 @@ const DEFAULT_FILTERS: ApprovalFilters = {
 }
 
 export default function ApprovalsPage() {
-  const { user } = useAuthenticatedRole()
+  const context = useAuthenticatedRole()
+  
+  if (!context.user) {
+    return null
+  }
+  
+  const { user } = context
 
   // ── State ───────────────────────────────────────────────────
   const [filters, setFilters] = useState<ApprovalFilters>(DEFAULT_FILTERS)
