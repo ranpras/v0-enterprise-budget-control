@@ -16,6 +16,7 @@ import {
   RejectDialog,
 } from "@/components/approvals/approval-confirm-dialog"
 import { MOCK_APPROVALS, type ApprovalItem } from "@/lib/approval-types"
+import { getApprovalsFromStorage, updateApprovalInStorage } from "@/lib/submission-utils"
 
 // ── Initial filter state ────────────────────────────────────────
 const DEFAULT_FILTERS: ApprovalFilters = {
@@ -50,15 +51,14 @@ export default function ApprovalsPage() {
 
   // ── Load submitted items from localStorage ──────────────────
   useEffect(() => {
-    const storedApprovals = localStorage.getItem("submitted_approvals")
-    if (storedApprovals) {
-      try {
-        const newApprovals = JSON.parse(storedApprovals)
-        setApprovals((prev) => [...newApprovals, ...prev])
-        localStorage.removeItem("submitted_approvals")
-      } catch (error) {
-        console.log("[v0] Error loading submitted approvals:", error)
-      }
+    const storedApprovals = getApprovalsFromStorage()
+    if (storedApprovals.length > 0) {
+      setApprovals((prev) => {
+        // Check if items already exist to avoid duplicates
+        const existingIds = new Set(prev.map((a) => a.id))
+        const uniqueNewItems = storedApprovals.filter((item) => !existingIds.has(item.id))
+        return [...uniqueNewItems, ...prev]
+      })
     }
   }, [])
 
@@ -129,25 +129,28 @@ export default function ApprovalsPage() {
     async (item: ApprovalItem, comment: string) => {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1200))
+
+      const updatedItem: ApprovalItem = {
+        ...item,
+        status: "approved" as const,
+        history: [
+          ...item.history,
+          {
+            approver: user.name,
+            action: "approved" as const,
+            date: new Date().toISOString(),
+            comment,
+          },
+        ],
+      }
+
       setApprovals((prev) =>
-        prev.map((a) =>
-          a.id === item.id
-            ? {
-                ...a,
-                status: "approved" as const,
-                history: [
-                  ...a.history,
-                  {
-                    approver: user.name,
-                    action: "approved" as const,
-                    date: new Date().toISOString(),
-                    comment,
-                  },
-                ],
-              }
-            : a,
-        ),
+        prev.map((a) => (a.id === item.id ? updatedItem : a)),
       )
+
+      // Save to localStorage for persistence
+      updateApprovalInStorage(updatedItem)
+
       setProcessedIds((prev) => new Set(prev).add(item.id))
       setDetailItem(null)
       toast.success("Document Approved", {
@@ -161,25 +164,28 @@ export default function ApprovalsPage() {
     async (item: ApprovalItem, comment: string) => {
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1200))
+
+      const updatedItem: ApprovalItem = {
+        ...item,
+        status: "rejected" as const,
+        history: [
+          ...item.history,
+          {
+            approver: user.name,
+            action: "rejected" as const,
+            date: new Date().toISOString(),
+            comment,
+          },
+        ],
+      }
+
       setApprovals((prev) =>
-        prev.map((a) =>
-          a.id === item.id
-            ? {
-                ...a,
-                status: "rejected" as const,
-                history: [
-                  ...a.history,
-                  {
-                    approver: user.name,
-                    action: "rejected" as const,
-                    date: new Date().toISOString(),
-                    comment,
-                  },
-                ],
-              }
-            : a,
-        ),
+        prev.map((a) => (a.id === item.id ? updatedItem : a)),
       )
+
+      // Save to localStorage for persistence
+      updateApprovalInStorage(updatedItem)
+
       setProcessedIds((prev) => new Set(prev).add(item.id))
       setDetailItem(null)
       toast.error("Document Rejected", {

@@ -17,6 +17,7 @@ import { SpkDetail } from "@/components/spending/spk-detail"
 import {
   type SpkItem,
 } from "@/lib/spk-types"
+import { createApprovalItem, saveApprovalToStorage } from "@/lib/submission-utils"
 
 type View = "list" | "create" | "edit" | "detail"
 
@@ -188,51 +189,36 @@ export function SpkPageShell({ initialData }: SpkPageShellProps) {
     (data: Partial<SpkItem>) => {
       const now = new Date().toISOString()
       if (selectedItem) {
-        setSpks((prev) =>
-          prev.map((s) =>
-            s.id === selectedItem.id
-              ? {
-                  ...s,
-                  ...data,
-                  status: "submitted" as const,
-                  submittedDate: now,
-                  updatedDate: now,
-                  history: [
-                    ...s.history,
-                    { actor: user.name, action: "submitted" as const, date: now },
-                  ],
-                }
-              : s,
-          ),
-        )
-        
-        // Create approval item for approval inbox
-        const approvalItem = {
-          id: `appr_${selectedItem.id}`,
-          docNumber: selectedItem.spkNumber,
-          type: "spk" as const,
-          description: data.description || selectedItem.description || "",
-          unit: data.unitKerja || selectedItem.unitKerja || user.unitName,
-          amount: selectedItem.lineItems?.reduce((sum, line) => sum + line.spkAmount, 0) || 0,
-          submittedBy: user.name,
+        const updatedItem = {
+          ...selectedItem,
+          ...data,
+          status: "submitted" as const,
           submittedDate: now,
-          status: "pending" as const,
-          lineItems: (selectedItem.lineItems || []).map((line) => ({
-            id: line.id,
-            coa: line.coa,
-            description: line.description,
-            amount: line.spkAmount,
-          })),
+          updatedDate: now,
           history: [
-            { approver: user.name, action: "submitted" as const, date: now },
+            ...selectedItem.history,
+            { actor: user.name, action: "submitted" as const, date: now },
           ],
         }
-        
-        // Store in localStorage for approval page to pick up
-        const existing = localStorage.getItem("submitted_approvals")
-        const existingApprovals = existing ? JSON.parse(existing) : []
-        localStorage.setItem("submitted_approvals", JSON.stringify([approvalItem, ...existingApprovals]))
-        
+        setSpks((prev) =>
+          prev.map((s) =>
+            s.id === selectedItem.id ? updatedItem : s,
+          ),
+        )
+
+        // Create and save approval item
+        const totalAmount = selectedItem.lineItems?.reduce((sum, line) => sum + line.spkAmount, 0) || 0
+        const approvalItem = createApprovalItem({
+          docNumber: selectedItem.spkNumber,
+          type: "spk",
+          description: data.description || selectedItem.description || "",
+          unit: data.unitKerja || selectedItem.unitKerja || user.unitName,
+          amount: totalAmount,
+          submittedBy: user.name,
+          lineItems: selectedItem.lineItems || [],
+        })
+        saveApprovalToStorage(approvalItem)
+
         toast.success(`SPK ${selectedItem.spkNumber} submitted.`)
       } else {
         const newId = `spk_${Date.now()}`
@@ -257,34 +243,20 @@ export function SpkPageShell({ initialData }: SpkPageShellProps) {
           ],
         }
         setSpks((prev) => [newSpk, ...prev])
-        
-        // Create approval item for new SPK
+
+        // Create and save approval item
         const totalAmount = (data.lineItems || []).reduce((sum, line) => sum + line.spkAmount, 0)
-        const approvalItem = {
-          id: `appr_${newId}`,
+        const approvalItem = createApprovalItem({
           docNumber: newSpk.spkNumber,
-          type: "spk" as const,
+          type: "spk",
           description: data.description || "",
           unit: data.unitKerja || user.unitName,
           amount: totalAmount,
           submittedBy: user.name,
-          submittedDate: now,
-          status: "pending" as const,
-          lineItems: (data.lineItems || []).map((line) => ({
-            id: line.id,
-            coa: line.coa,
-            description: line.description,
-            amount: line.spkAmount,
-          })),
-          history: [
-            { approver: user.name, action: "submitted" as const, date: now },
-          ],
-        }
-        
-        const existing = localStorage.getItem("submitted_approvals")
-        const existingApprovals = existing ? JSON.parse(existing) : []
-        localStorage.setItem("submitted_approvals", JSON.stringify([approvalItem, ...existingApprovals]))
-        
+          lineItems: data.lineItems || [],
+        })
+        saveApprovalToStorage(approvalItem)
+
         toast.success(`SPK ${newSpk.spkNumber} submitted.`)
       }
       setView("list")
