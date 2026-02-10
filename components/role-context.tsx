@@ -33,17 +33,17 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserSession | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Hydrate from sessionStorage on mount
+  // Hydrate from localStorage on mount - persists across browser close
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem("ebcs_auth_user")
+      const stored = localStorage.getItem("ebcs_auth_user")
       if (stored) {
         const parsed = JSON.parse(stored)
         setUser(parsed)
       }
     } catch (e) {
       console.error("[v0] Failed to restore session:", e)
-      sessionStorage.removeItem("ebcs_auth_user")
+      localStorage.removeItem("ebcs_auth_user")
     } finally {
       setIsLoading(false)
     }
@@ -56,8 +56,8 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     )
     if (found) {
       setUser(found)
-      // Persist to sessionStorage
-      sessionStorage.setItem("ebcs_auth_user", JSON.stringify(found))
+      // Persist to localStorage for persistence across browser close
+      localStorage.setItem("ebcs_auth_user", JSON.stringify(found))
       return true
     }
     return false
@@ -65,14 +65,14 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null)
-    sessionStorage.removeItem("ebcs_auth_user")
+    localStorage.removeItem("ebcs_auth_user")
   }, [])
 
   const switchRole = useCallback((role: Role) => {
     const newUser = DEMO_USERS.find((u) => u.role === role)
     if (newUser) {
       setUser(newUser)
-      sessionStorage.setItem("ebcs_auth_user", JSON.stringify(newUser))
+      localStorage.setItem("ebcs_auth_user", JSON.stringify(newUser))
     }
   }, [])
 
