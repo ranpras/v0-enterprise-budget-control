@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { Plus, Trash2, ArrowLeft, Save, SendHorizontal, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -70,6 +70,34 @@ export function ActualForm({ editItem, unitKerja, onSave, onSubmit, onCancel }: 
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showSubmitDialog, setShowSubmitDialog] = useState(false)
+
+  // Auto-save form state to localStorage to prevent data loss on refresh
+  useEffect(() => {
+    const formDraft = {
+      fiscalYear,
+      spkNumber,
+      vendor,
+      description,
+      invoiceRef,
+      actualDate,
+      lines,
+      timestamp: new Date().toISOString(),
+    }
+    try {
+      localStorage.setItem("actual_form_draft", JSON.stringify(formDraft))
+    } catch (e) {
+      console.error("[v0] Failed to save Actual form draft:", e)
+    }
+  }, [fiscalYear, spkNumber, vendor, description, invoiceRef, actualDate, lines])
+
+  // Clear draft when submit or cancel
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem("actual_form_draft")
+    } catch (e) {
+      console.error("[v0] Failed to clear Actual form draft:", e)
+    }
+  }, [])
 
   // Auto-fill vendor from SPK lookup
   function handleSpkChange(val: string) {
@@ -155,11 +183,19 @@ export function ActualForm({ editItem, unitKerja, onSave, onSubmit, onCancel }: 
   }
 
   function handleSave() {
-    if (validate()) onSave(buildPayload())
+    if (validate()) {
+      clearDraft()
+      onSave(buildPayload())
+    }
   }
 
   function handleSubmitConfirm() {
     if (validate()) setShowSubmitDialog(true)
+  }
+
+  function handleCancel() {
+    clearDraft()
+    onCancel()
   }
 
   return (
@@ -482,7 +518,7 @@ export function ActualForm({ editItem, unitKerja, onSave, onSubmit, onCancel }: 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { setShowSubmitDialog(false); onSubmit(buildPayload()) }}>
+            <AlertDialogAction onClick={() => { setShowSubmitDialog(false); clearDraft(); onSubmit(buildPayload()) }}>
               Yes, Submit
             </AlertDialogAction>
           </AlertDialogFooter>

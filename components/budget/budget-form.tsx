@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { Plus, Trash2, ArrowLeft, Save, SendHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -94,6 +94,31 @@ export function BudgetForm({
 
   // Submit dialog
   const [showSubmitDialog, setShowSubmitDialog] = useState(false)
+
+  // Auto-save form state to localStorage to prevent data loss on refresh
+  useEffect(() => {
+    const formDraft = {
+      budgetType,
+      fiscalYear,
+      description,
+      lines,
+      timestamp: new Date().toISOString(),
+    }
+    try {
+      localStorage.setItem("budget_form_draft", JSON.stringify(formDraft))
+    } catch (e) {
+      console.error("[v0] Failed to save form draft:", e)
+    }
+  }, [budgetType, fiscalYear, description, lines])
+
+  // Clear draft when submit or cancel
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem("budget_form_draft")
+    } catch (e) {
+      console.error("[v0] Failed to clear form draft:", e)
+    }
+  }, [])
 
   const addLine = useCallback(() => {
     setLines((prev) => [...prev, createEmptyLine()])
@@ -189,9 +214,25 @@ export function BudgetForm({
   }
 
   function handleSave() {
-    if (validate()) {
-      onSave(buildPayload())
+    const payload = buildPayload()
+    if (payload) {
+      clearDraft()
+      onSave(payload)
     }
+  }
+
+  function handleSubmit() {
+    const payload = buildPayload()
+    if (payload) {
+      clearDraft()
+      onSubmit(payload)
+    }
+  }
+
+  function handleCancel() {
+    clearDraft()
+    onCancel()
+  }
   }
 
   function handleSubmitConfirm() {
@@ -495,6 +536,7 @@ export function BudgetForm({
             <AlertDialogAction
               onClick={() => {
                 setShowSubmitDialog(false)
+                clearDraft()
                 onSubmit(buildPayload())
               }}
             >

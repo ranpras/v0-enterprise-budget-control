@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { Plus, Trash2, ArrowLeft, Save, SendHorizontal, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -69,6 +69,32 @@ export function SpkForm({ editItem, unitKerja, onSave, onSubmit, onCancel }: Spk
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showSubmitDialog, setShowSubmitDialog] = useState(false)
+
+  // Auto-save form state to localStorage to prevent data loss on refresh
+  useEffect(() => {
+    const formDraft = {
+      fiscalYear,
+      vendor,
+      description,
+      contractRef,
+      lines,
+      timestamp: new Date().toISOString(),
+    }
+    try {
+      localStorage.setItem("spk_form_draft", JSON.stringify(formDraft))
+    } catch (e) {
+      console.error("[v0] Failed to save SPK form draft:", e)
+    }
+  }, [fiscalYear, vendor, description, contractRef, lines])
+
+  // Clear draft when submit or cancel
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem("spk_form_draft")
+    } catch (e) {
+      console.error("[v0] Failed to clear SPK form draft:", e)
+    }
+  }, [])
 
   const addLine = useCallback(() => {
     setLines((prev) => [...prev, createEmptyLine()])
@@ -143,18 +169,26 @@ export function SpkForm({ editItem, unitKerja, onSave, onSubmit, onCancel }: Spk
   }
 
   function handleSave() {
-    if (validate()) onSave(buildPayload())
+    if (validate()) {
+      clearDraft()
+      onSave(buildPayload())
+    }
   }
 
   function handleSubmitConfirm() {
     if (validate()) setShowSubmitDialog(true)
   }
 
+  function handleCancel() {
+    clearDraft()
+    onCancel()
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* Top bar */}
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={onCancel}>
+        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={handleCancel}>
           <ArrowLeft className="h-4 w-4" />
           Back to List
         </Button>
@@ -439,7 +473,7 @@ export function SpkForm({ editItem, unitKerja, onSave, onSubmit, onCancel }: Spk
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { setShowSubmitDialog(false); onSubmit(buildPayload()) }}>
+            <AlertDialogAction onClick={() => { setShowSubmitDialog(false); clearDraft(); onSubmit(buildPayload()) }}>
               Yes, Submit
             </AlertDialogAction>
           </AlertDialogFooter>
