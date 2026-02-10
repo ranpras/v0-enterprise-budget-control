@@ -18,6 +18,7 @@ export interface SubmissionPayload {
 
 /**
  * Creates an approval item from a submission payload
+ * Initial approver role is supervisor for all submissions
  */
 export function createApprovalItem(payload: SubmissionPayload): ApprovalItem {
   const now = new Date().toISOString()
@@ -40,6 +41,7 @@ export function createApprovalItem(payload: SubmissionPayload): ApprovalItem {
     submittedBy: payload.submittedBy,
     submittedDate: now,
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems,
     history: [
       {

@@ -57,6 +57,7 @@ export interface ApprovalItem {
   submittedBy: string
   submittedDate: string
   status: ApprovalStatus
+  currentApproverRole: "supervisor" | "admin"
   lineItems: LineItem[]
   history: ApprovalHistoryEntry[]
   budgetImpact?: {
@@ -113,6 +114,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Rina Hartono",
     submittedDate: "2026-02-05T14:32:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_001", coa: "5201.001", description: "Dell PowerEdge R760 Server x4", amount: 640000000 },
       { id: "li_002", coa: "5201.002", description: "Network Switch Cisco Catalyst 9300", amount: 120000000 },
@@ -134,6 +136,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Ahmad Fauzi",
     submittedDate: "2026-02-04T09:15:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_004", coa: "5301.010", description: "Civil & Interior Works", amount: 210000000 },
       { id: "li_005", coa: "5301.011", description: "Electrical & Lighting Upgrade", amount: 65000000 },
@@ -154,6 +157,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Dewi Lestari",
     submittedDate: "2026-02-03T16:45:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_007", coa: "5401.001", description: "Digital Advertising - Google & Meta", amount: 800000000 },
       { id: "li_008", coa: "5401.002", description: "Brand Activation Events", amount: 450000000 },
@@ -175,6 +179,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Maya Indah",
     submittedDate: "2026-02-03T11:20:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_010", coa: "5501.001", description: "External Trainer Fee (Leadership)", amount: 60000000 },
       { id: "li_011", coa: "5501.002", description: "Venue & Logistics", amount: 40000000 },
@@ -195,6 +200,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Hadi Sutanto",
     submittedDate: "2026-02-02T08:00:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_013", coa: "5101.001", description: "Fleet Maintenance & Fuel", amount: 1200000000 },
       { id: "li_014", coa: "5101.002", description: "Warehouse Operations", amount: 900000000 },
@@ -216,6 +222,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Rina Hartono",
     submittedDate: "2026-02-01T10:00:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_016", coa: "5201.010", description: "AWS Compute (EC2 + ECS)", amount: 95000000 },
       { id: "li_017", coa: "5201.011", description: "AWS Storage (S3 + RDS)", amount: 50000000 },
@@ -236,6 +243,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Fajar Wibowo",
     submittedDate: "2026-01-31T15:30:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_019", coa: "5601.001", description: "External Legal Counsel", amount: 180000000 },
       { id: "li_020", coa: "5601.002", description: "Regulatory Filing Fees", amount: 70000000 },
@@ -255,6 +263,7 @@ export const MOCK_APPROVALS: ApprovalItem[] = [
     submittedBy: "Siti Nurhaliza",
     submittedDate: "2026-01-30T09:45:00",
     status: "pending",
+    currentApproverRole: "supervisor",
     lineItems: [
       { id: "li_021", coa: "5701.001", description: "Stationery & Paper Supplies", amount: 15000000 },
       { id: "li_022", coa: "5701.002", description: "Toner & Printer Consumables", amount: 20000000 },

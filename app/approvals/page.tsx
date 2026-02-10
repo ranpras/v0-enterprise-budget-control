@@ -68,6 +68,13 @@ export default function ApprovalsPage() {
   // ── Filtering logic ─────────────────────────────────────────
   const filtered = useMemo(() => {
     return approvals.filter((item) => {
+      // Role-based filter: only show items assigned to current user's approval role
+      // Supervisor sees items where currentApproverRole is "supervisor"
+      // Admin sees all items (no role filter)
+      if (user.role === "supervisor" && item.currentApproverRole !== "supervisor") {
+        return false
+      }
+
       // Search across doc number, description, submitter
       if (filters.search) {
         const q = filters.search.toLowerCase()
@@ -104,7 +111,7 @@ export default function ApprovalsPage() {
       }
       return true
     })
-  }, [approvals, filters])
+  }, [approvals, filters, user.role])
 
   // Reset page when filters change
   const handleFiltersChange = useCallback((newFilters: ApprovalFilters) => {
