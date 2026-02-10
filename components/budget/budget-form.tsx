@@ -233,7 +233,6 @@ export function BudgetForm({
     clearDraft()
     onCancel()
   }
-  }
 
   function handleSubmitConfirm() {
     if (validate()) {
