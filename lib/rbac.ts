@@ -23,12 +23,13 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   management: "Read-only dashboards and reports",
 }
 
-// Demo users for role switching
-export const DEMO_USERS: UserSession[] = [
+// Demo users for authentication (password required for all accounts)
+export const DEMO_USERS: (UserSession & { password: string })[] = [
   {
     id: "usr_op_01",
     name: "Rina Hartono",
     email: "rina@company.com",
+    password: "password123",
     role: "operator",
     unitId: "unit_fin",
     unitName: "Finance Dept",
@@ -37,6 +38,7 @@ export const DEMO_USERS: UserSession[] = [
     id: "usr_sv_01",
     name: "Budi Setiawan",
     email: "budi@company.com",
+    password: "password123",
     role: "supervisor",
     unitId: "unit_fin",
     unitName: "Finance Dept",
@@ -45,6 +47,7 @@ export const DEMO_USERS: UserSession[] = [
     id: "usr_adm_01",
     name: "Sari Dewi",
     email: "sari@company.com",
+    password: "password123",
     role: "admin",
     unitId: "unit_hq",
     unitName: "Headquarters",
@@ -53,6 +56,7 @@ export const DEMO_USERS: UserSession[] = [
     id: "usr_mgmt_01",
     name: "Andi Prasetyo",
     email: "andi@company.com",
+    password: "password123",
     role: "management",
     unitId: "unit_hq",
     unitName: "Headquarters",

@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 
 export function LoginPage() {
   const { login } = useRole()
@@ -46,23 +45,6 @@ export function LoginPage() {
     }
   }
 
-  function handleQuickLogin(userEmail: string) {
-    setError("")
-    setIsLoading(true)
-    
-    // Simulate network delay
-    setTimeout(() => {
-      const success = login(userEmail, "demo")
-      if (success) {
-        setEmail("")
-        setPassword("")
-      } else {
-        setError("Quick login failed. Please try again.")
-      }
-      setIsLoading(false)
-    }, 600)
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="flex w-full max-w-md flex-col gap-6">
@@ -84,7 +66,7 @@ export function LoginPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-lg">Sign In</CardTitle>
             <CardDescription>
-              Enter your credentials to access the system
+              Enter your email and password to access the system
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -94,7 +76,7 @@ export function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder="rina@company.com"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value)
@@ -154,46 +136,36 @@ export function LoginPage() {
           </CardContent>
         </Card>
 
-        {/* Quick Login Cards */}
-        <Card>
+        {/* Demo Credentials Info */}
+        <Card className="bg-muted/50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Quick Login (Demo)</CardTitle>
+            <CardTitle className="text-sm">Demo Credentials</CardTitle>
             <CardDescription className="text-xs">
-              Click any user to sign in instantly
+              Use any of these accounts to test the system
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-0">
-            <Separator className="mb-3" />
-            <div className="grid grid-cols-2 gap-2">
-              {DEMO_USERS.map((demoUser) => (
-                <button
-                  key={demoUser.id}
-                  type="button"
-                  onClick={() => handleQuickLogin(demoUser.email)}
-                  className="flex items-center gap-2.5 rounded-lg border p-2.5 text-left transition-all hover:border-primary/30 hover:bg-accent/50"
-                >
-                  <Avatar className="h-8 w-8 shrink-0">
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
-                      {demoUser.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="truncate text-xs font-medium">
-                      {demoUser.name}
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="w-fit text-[10px] font-normal"
-                    >
-                      {ROLE_LABELS[demoUser.role]}
-                    </Badge>
-                  </div>
-                </button>
-              ))}
-            </div>
+          <CardContent className="space-y-2 text-xs">
+            {DEMO_USERS.map((demoUser) => (
+              <div key={demoUser.id} className="flex items-center gap-2 rounded border p-2 bg-background">
+                <Avatar className="h-6 w-6 shrink-0">
+                  <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-medium">
+                    {demoUser.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium">{demoUser.email}</div>
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] font-normal"
+                  >
+                    {ROLE_LABELS[demoUser.role]}
+                  </Badge>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 

@@ -49,15 +49,17 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const login = useCallback((email: string, _password: string) => {
-    // Demo login: match by email, any password accepted
+  const login = useCallback((email: string, password: string) => {
+    // Demo login: match by email AND password - both required
     const found = DEMO_USERS.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase(),
+      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password,
     )
     if (found) {
-      setUser(found)
-      // Persist to localStorage for persistence across browser close
-      localStorage.setItem("ebcs_auth_user", JSON.stringify(found))
+      // Extract user session without password
+      const { password: _, ...userSession } = found
+      setUser(userSession as UserSession)
+      // Persist to localStorage for persistence across browser close (NO password stored)
+      localStorage.setItem("ebcs_auth_user", JSON.stringify(userSession))
       return true
     }
     return false
@@ -71,8 +73,10 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
   const switchRole = useCallback((role: Role) => {
     const newUser = DEMO_USERS.find((u) => u.role === role)
     if (newUser) {
-      setUser(newUser)
-      localStorage.setItem("ebcs_auth_user", JSON.stringify(newUser))
+      // Extract user session without password
+      const { password: _, ...userSession } = newUser
+      setUser(userSession as UserSession)
+      localStorage.setItem("ebcs_auth_user", JSON.stringify(userSession))
     }
   }, [])
 

@@ -18,6 +18,7 @@ import {
   type BudgetItem,
   type BudgetType,
 } from "@/lib/budget-types"
+import { createApprovalItem, saveApprovalToStorage } from "@/lib/submission-utils"
 
 type View = "list" | "create" | "edit" | "detail"
 
@@ -230,6 +231,23 @@ export function BudgetPageShell({
               : b,
           ),
         )
+
+        // Create and save approval item
+        const totalAmount = selectedItem.lineItems?.reduce(
+          (sum, line) => sum + (line.monthly?.reduce((m) => m + m, 0) || 0),
+          0,
+        ) || 0
+        const approvalItem = createApprovalItem({
+          docNumber: selectedItem.budgetId,
+          type: "budget",
+          description: data.description || selectedItem.description || "",
+          unit: data.unitKerja || selectedItem.unitKerja || user.unitName,
+          amount: totalAmount,
+          submittedBy: user.name,
+          lineItems: selectedItem.lineItems || [],
+        })
+        saveApprovalToStorage(approvalItem)
+
         toast.success(`Budget ${selectedItem.budgetId} submitted.`)
       } else {
         const newId = `${budgetType === "project" ? "bp" : "br"}_${Date.now()}`
@@ -261,6 +279,23 @@ export function BudgetPageShell({
           ],
         }
         setBudgets((prev) => [newBudget, ...prev])
+
+        // Create and save approval item
+        const totalAmount = (data.lineItems || []).reduce(
+          (sum, line) => sum + (line.monthly?.reduce((m) => m + m, 0) || 0),
+          0,
+        )
+        const approvalItem = createApprovalItem({
+          docNumber: newBudget.budgetId,
+          type: "budget",
+          description: data.description || "",
+          unit: data.unitKerja || user.unitName,
+          amount: totalAmount,
+          submittedBy: user.name,
+          lineItems: data.lineItems || [],
+        })
+        saveApprovalToStorage(approvalItem)
+
         toast.success(`Budget ${newBudget.budgetId} submitted.`)
       }
       setView("list")
