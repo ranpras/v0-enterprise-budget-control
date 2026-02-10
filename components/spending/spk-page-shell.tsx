@@ -463,5 +463,4 @@ export function SpkPageShell({ initialData }: SpkPageShellProps) {
         />
       </div>
     )
-  }
 }
